@@ -1,55 +1,31 @@
-# import the ohbot module
-
 from ohbot import ohbot
+from behavior.behavior_engine import BehaviorEngine
 
-# Reset Ohbot
 
-ohbot.reset()
+def main():
+    robot = BehaviorEngine()
 
-# Move turn ohbot's head and eyes.
-ohbot.move(1, 2)
-ohbot.move(3, 1)
+    try:
+        ohbot.reset()
+        robot.start()
 
-# Wait a few seconds for the motors to move
+        print("OhBot is ready.")
+        print("Type something and press Enter.")
+        print("Type 'exit' to stop.")
 
-ohbot.wait(2)
+        while True:
+            user_input = input("You: ")
 
-# Move head back to the centre and say "Hello World"
-ohbot.move(1, 5, 1)
-ohbot.say("Hello World")
+            if user_input.lower() == "exit":
+                break
 
-# Slowly increase the brightness of the eyes.
+            robot.respond(user_input)
 
-for x in range(0, 10):
-    ohbot.setEyeColour(x, x, x)
-    ohbot.wait(0.1)
+    finally:
+        robot.stop()
+        ohbot.reset()
+        ohbot.close()
 
-    ohbot.setEyeColour(0, 0, 0)
-    ohbot.wait(0.2)
 
-ohbot.move(1, 5, 1)
-ohbot.wait(1)
-
-ohbot.say("Now I am running in python you know", False)
-
-for x in range(0, 10):
-    ohbot.move(3, x)
-    ohbot.setEyeColour(x, 10 - x, x)
-    ohbot.wait(0.3)
-
-ohbot.say("I can do the robot")
-
-for y in range(0, 4):
-    for x in range(0, 10):
-        ohbot.move(y, x)
-        ohbot.setEyeColour(y, x, 10 - x)
-        ohbot.wait(0.2)
-
-ohbot.reset()
-ohbot.say("and ventriloquism", True, False)
-ohbot.setEyeColour(0, 0, 10)
-ohbot.wait(1)
-
-# close ohbot at the end.
-
-ohbot.close()
+if __name__ == "__main__":
+    main()
