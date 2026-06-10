@@ -10,27 +10,26 @@ def run_demo():
     mgr.start()
 
     try:
-        # # 1) Blinking: let the blink loop run for a few seconds
-        # print("Demo: blinking (watch the robot blink) for 4 seconds...")
-        # time.sleep(5)
-        #
-        # # 2) Emotions: cycle through several moods
-        # emotions = ["happy", "surprise", "sad", "angry"]
-        # print("Demo: showing emotions")
-        # for e in emotions:
-        #     print(f" Setting mood: {e}")
-        #     mgr.set_mood(e)
-        #     time.sleep(5)
-        #
-        # # 3) Simple speaking: short expressive phrase
-        # print("Demo: simple speaking")
-        # mgr.expressive_say("Hello! I am OhBot. Nice to meet you.", mood="happy")
-        # time.sleep(1)
-        #
-        # # 4) Comedian: tell a short joke (uses ComedyGenerator)
-        # print("Demo: comedian — telling a short joke")
-        # mgr.tell_joke()
-        # time.sleep(1)
+        # 1) Blinking: let the blink loop run for a few seconds
+        print("Demo: blinking (watch the robot blink) for 4 seconds...")
+        mgr.expressive_say("Hello! I am OhBot. This is me just blinking.", mood="neutral")
+        time.sleep(10)
+
+        # 2) Emotions: cycle through several moods
+        emotions = ["happy", "surprise", "sad", "angry"]
+        print("Demo: showing emotions")
+        mgr.expressive_say("Now, I will show some emotions. Don`t call me dramatic.", mood="neutral")
+        for e in emotions:
+            print(f" Setting mood: {e}")
+            mgr.expressive_say(f"This is me being {e}.", mood=e)
+            time.sleep(1)
+            mgr.set_mood(e)
+            time.sleep(5)
+
+        # 3) Simple speaking: short expressive phrase
+        print("Demo: simple speaking")
+        mgr.expressive_say("Now, Lets stop being dramatic and let me tell you some jokes.", mood="happy")
+        time.sleep(1)
 
         # Minimal interactive prompt preserved from original script
         print("\n=== OhBot Stand-up Comedian ===")
