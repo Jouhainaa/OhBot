@@ -37,15 +37,48 @@ class ComedyGenerator:
             return [("I would tell you a joke, but my comedy processor is offline.", "sad")]
 
         if style == "best":
-            prompt = """You are a hilarious stand-up comedian performing on stage. Keep it to 1-3 sentences max.
+            prompt = f"""You are a hilarious stand-up comedian performing on stage. 
+Generate a witty, clever stand-up comedy bit. {"Focus on: " + topic if topic else "Use a random funny topic."}
+Keep it to 1-3 sentences max. Be observational and unique.
+
 Format your response EXACTLY like this (one sentence per line):
 [emotion] sentence content
-"""
+[emotion] sentence content
+
+IMPORTANT: Use VARIED emotions! Don't just use "thrilled" or "happy" every time.
+Valid emotions to mix: happy, thrilled, surprise, neutral (deadpan), sad (ironic), angry (frustrated humor)
+
+Examples of good variety:
+[neutral] So I asked my robot for career advice.
+[sideeye] It told me to just keep executing my tasks.
+[surprise] Turns out it meant that literally!
+[thrilled] I've never been so motivated!
+
+[sad] Dating a robot is hard.
+[angry] It keeps updating without telling me!
+[thrilled] But at least it never forgets my birthday!
+[surprise] Mainly because it stores every argument we've ever had!"""
         else:
-            prompt = """Tell me a short, funny joke. Keep it to 1-2 sentences max.
+            prompt = f"""Tell me a short, funny joke. {"Topic: " + topic if topic else "Random topic."}
+Keep it to 1-2 sentences max.
+
 Format your response EXACTLY like this (one sentence per line):
 [emotion] sentence content
-"""
+[emotion] sentence content
+
+IMPORTANT: Use DIFFERENT emotions for setup vs punchline! Mix it up!
+Valid emotions: happy, thrilled, surprise, neutral (deadpan), sad (ironic/sarcastic)
+
+Examples of varied emotions:
+[neutral] Why did the robot go to school?
+[thrilled] To improve its byte!
+
+[sideeye] I told my AI it was funny.
+[angry] It disagreed and explained why for 2 hours!
+
+[sad] My computer crashed.
+[surprise] So it literally froze!"""
+
 
         try:
             response = self.client.models.generate_content(
@@ -62,7 +95,7 @@ Format your response EXACTLY like this (one sentence per line):
                     emotion_end = line.index(']')
                     emotion = line[1:emotion_end].lower().strip()
                     sentence = line[emotion_end + 1 :].strip()
-                    valid_emotions = ["happy", "thrilled", "surprise", "sideeye", "neutral", "sad", "angry"]
+                    valid_emotions = ["happy", "thrilled", "surprise", "neutral", "sad", "angry"]
                     if emotion not in valid_emotions:
                         emotion = "neutral"
                     if sentence:
