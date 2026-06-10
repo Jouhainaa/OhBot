@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 import os
 from typing import Optional
 
@@ -6,6 +7,8 @@ try:
     GEMINI_AVAILABLE = True
 except Exception:
     GEMINI_AVAILABLE = False
+
+load_dotenv()
 
 
 class ComedyGenerator:

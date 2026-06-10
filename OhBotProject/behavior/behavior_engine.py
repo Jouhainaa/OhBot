@@ -12,7 +12,8 @@ from .comedy_generator import ComedyGenerator
 try:
     import speech_recognition as sr
     SPEECH_RECOGNITION_AVAILABLE = True
-except Exception:
+except Exception as e:
+    print(e)
     SPEECH_RECOGNITION_AVAILABLE = False
 
 
