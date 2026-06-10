@@ -43,6 +43,7 @@ def run_demo():
             choice = "2"
 
         if choice == "1":
+            # Interactive mode: allow voice or keyboard topic input; only basic jokes.
             num_jokes = 3
             try:
                 num_input = input("How many jokes would you like? (default 3): ").strip()
@@ -51,18 +52,45 @@ def run_demo():
             except (ValueError, EOFError):
                 pass
 
-            print("\nComedy Style:")
-            print("  1 = Basic (short, punchy jokes)")
-            print("  2 = Best (longer, sophisticated routines)")
+            # Choose input method
             try:
-                style_input = input("Choose style (1 or 2, default 1): ").strip()
-                style = "best" if style_input == "2" else "basic"
+                method = input("Input method — (v)oice or (k)eyboard? (default k): ").strip().lower()
             except EOFError:
-                style = "basic"
+                method = "k"
 
-            print(f"\nStarting {style} comedy session with {num_jokes} jokes...")
-            print("(Make sure your microphone is ready!)\n")
-            mgr.interactive_comedy_session(num_jokes=num_jokes, style=style)
+            use_voice = method == "v"
+            if use_voice:
+                print("Using voice input for topics. Make sure your microphone is active.")
+            else:
+                print("Using keyboard input for topics.")
+
+            for i in range(num_jokes):
+                topic = None
+
+                if use_voice:
+                    mgr.expressive_say("Please say a topic for the next joke.", "neutral")
+                    print(f"Listening for topic #{i+1} (timeout 8s)...")
+                    topic_heard = mgr.listen_for_speech(timeout=8)
+                    if topic_heard:
+                        topic = topic_heard
+                        print(f"Heard topic: {topic}")
+                    else:
+                        print("No voice input detected — falling back to keyboard.")
+                        try:
+                            topic_in = input(f"Enter topic for joke #{i+1} (leave blank for random): ").strip()
+                        except EOFError:
+                            topic_in = ""
+                        topic = topic_in if topic_in else None
+                else:
+                    try:
+                        topic_in = input(f"Enter topic for joke #{i+1} (leave blank for random): ").strip()
+                    except EOFError:
+                        topic_in = ""
+                    topic = topic_in if topic_in else None
+
+                print(f"Telling joke #{i+1} about: {topic or 'random'}")
+                mgr.tell_joke(topic=topic, style="basic")
+                time.sleep(1.0)
         else:
             mgr.expressive_say("Hello! Welcome to my show!", "happy")
             mgr.tell_joke(topic=None, style="basic")
