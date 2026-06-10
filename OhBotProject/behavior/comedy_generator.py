@@ -79,7 +79,6 @@ Examples of varied emotions:
 [sad] My computer crashed.
 [surprise] So it literally froze!"""
 
-
         try:
             response = self.client.models.generate_content(
                 model="gemini-3.1-flash-lite",
