@@ -29,6 +29,17 @@ class OhBotBehaviorManager:
 
         self.comedy_generator = ComedyGenerator()
 
+        # Keep one recognizer for the lifetime of the show so its dynamic
+        # energy threshold can adapt instead of starting from scratch for
+        # every audience member.
+        self._recognizer = None
+        if SPEECH_RECOGNITION_AVAILABLE:
+            self._recognizer = sr.Recognizer()
+            self._recognizer.dynamic_energy_threshold = True
+            self._recognizer.pause_threshold = 1.2
+            self._recognizer.non_speaking_duration = 0.6
+            self._recognizer.phrase_threshold = 0.3
+
     # ---------- Basic helpers ----------
 
     @staticmethod
@@ -160,31 +171,97 @@ class OhBotBehaviorManager:
 
         self.set_mood("neutral")
 
-    def listen_for_speech(self, timeout: int = 10) -> Optional[str]:
+    def _speech_recovery_message(self, text: str, mood: str = "neutral"):
+        """Give recognition feedback without letting a hardware error hide it."""
+        print(text)
+        try:
+            self.expressive_say(text, mood)
+        except Exception:
+            pass
+
+    def listen_for_speech(
+        self,
+        timeout: float = 12,
+        phrase_time_limit: Optional[float] = 20,
+        max_attempts: int = 3,
+        calibrate_duration: float = 0.8,
+    ) -> Optional[str]:
+        """Listen for a complete audience response, with useful retry feedback.
+
+        ``timeout`` is only the wait for somebody to *start* speaking.
+        ``phrase_time_limit`` controls how long they may continue, which avoids
+        the old behaviour where longer suggestions were effectively cut short.
+        """
         if not SPEECH_RECOGNITION_AVAILABLE:
             print("Speech recognition not available. Install: pip install SpeechRecognition")
             return None
 
-        recognizer = sr.Recognizer()
+        recognizer = self._recognizer or sr.Recognizer()
+        attempts = max(1, max_attempts)
 
-        try:
-            with sr.Microphone() as source:
-                self.set_mood("surprise")
-                print("Listening...")
-                recognizer.adjust_for_ambient_noise(source, duration=1)
-                audio = recognizer.listen(source, timeout=timeout)
-
-            print("Processing speech...")
-            text = recognizer.recognize_google(audio)
-            print(f"You said: {text}")
-            return text.lower()
-
-        except Exception as e:
+        for attempt in range(1, attempts + 1):
             try:
-                self.expressive_say("Sorry, I didn't catch that!", "sad")
-            except Exception:
-                pass
-            return None
+                with sr.Microphone() as source:
+                    self.set_mood("surprise")
+                    if attempt == 1 and calibrate_duration > 0:
+                        print("Calibrating for room noise. Please stay quiet...")
+                        recognizer.adjust_for_ambient_noise(
+                            source,
+                            duration=calibrate_duration,
+                        )
+
+                    print(f"Listening (attempt {attempt}/{attempts})...")
+                    audio = recognizer.listen(
+                        source,
+                        timeout=timeout,
+                        phrase_time_limit=phrase_time_limit,
+                    )
+
+                print("Processing speech...")
+                text = recognizer.recognize_google(audio).strip()
+                if text:
+                    print(f"You said: {text}")
+                    return text.lower()
+
+            except sr.WaitTimeoutError:
+                if attempt < attempts:
+                    self._speech_recovery_message(
+                        "I didn't hear anyone. Please speak after I finish this sentence.",
+                        "sideeye",
+                    )
+            except sr.UnknownValueError:
+                if attempt < attempts:
+                    self._speech_recovery_message(
+                        "I heard you, but the words got lost. Please say that once more, slowly.",
+                        "sad",
+                    )
+            except sr.RequestError as error:
+                print(f"Speech recognition service error: {error}")
+                self._speech_recovery_message(
+                    "My hearing service is unavailable. Let's use the keyboard instead.",
+                    "sad",
+                )
+                return None
+            except (OSError, AttributeError) as error:
+                print(f"Microphone error: {error}")
+                self._speech_recovery_message(
+                    "I cannot reach the microphone. Let's use the keyboard instead.",
+                    "sad",
+                )
+                return None
+            except Exception as error:
+                print(f"Unexpected speech recognition error: {error}")
+                if attempt < attempts:
+                    self._speech_recovery_message(
+                        "My ears just buffered. Let's try that again.",
+                        "surprise",
+                    )
+
+        self._speech_recovery_message(
+            "I still couldn't catch it. No worries, you can type the topic.",
+            "sad",
+        )
+        return None
 
     # ---------- Background loops ----------
 
