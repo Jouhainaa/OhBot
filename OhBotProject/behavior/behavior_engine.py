@@ -140,8 +140,10 @@ class OhBotBehaviorManager:
         self.move_lips(*VISEMES["rest"], speed=5, jitter=0.04)
 
     def expressive_say(self, text: str, mood: str = "neutral", return_to_neutral: bool = True):
+        self.set_mood(mood)
         with self._lock:
             self.set_mood(mood)
+            time.sleep(1)
             self.speaking = True
 
         lip_thread = threading.Thread(
@@ -152,7 +154,9 @@ class OhBotBehaviorManager:
         lip_thread.start()
 
         try:
+            self.set_mood(mood)
             ohbot.say(text)
+            self.set_mood(mood)
         finally:
             self.speaking = False
             lip_thread.join(timeout=1.0)
@@ -202,7 +206,7 @@ class OhBotBehaviorManager:
         for attempt in range(1, attempts + 1):
             try:
                 with sr.Microphone() as source:
-                    self.set_mood("surprise")
+                    self.set_mood("neutral")
                     if attempt == 1 and calibrate_duration > 0:
                         print("Calibrating for room noise. Please stay quiet...")
                         recognizer.adjust_for_ambient_noise(
@@ -301,8 +305,6 @@ class OhBotBehaviorManager:
 
                 self.safe_move(ohbot.HEADTURN, random.uniform(4.2, 5.8), speed=3)
                 self.safe_move(ohbot.HEADNOD, random.uniform(4.4, 5.8), speed=3)
-
-    # ---------- Lifecycle ----------
 
     def start(self):
         if self.running:

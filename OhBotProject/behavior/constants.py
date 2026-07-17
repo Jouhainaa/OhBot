@@ -23,7 +23,8 @@ MOODS: Dict[str, MoodPose] = {
     "sad": MoodPose(2, 4.5, 5, 2, 8, 7, 3, 0.75, 0.82),
     "angry": MoodPose(6, 5, 5, 3, 5, 6, 2, 1.2, 1.05),
     "surprise": MoodPose(6, 5, 5, 10, 10, 9, 10, 1.25, 1.1),
-    "sideeye": MoodPose(5, 5, 9, 5, 8, 4, 7, 0.9, 0.95),
+    "sideeye": MoodPose(5, 5, 0, 3, 8, 4, 7, 0.9, 0.95),
+    "disappointed": MoodPose(1, 7, 5, 3, 5, 6, 2, 1.2, 1.05)
 }
 
 

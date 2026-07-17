@@ -3,6 +3,7 @@
 import re
 import time
 from typing import Optional
+from ohbot import ohbot
 
 from OhBotProject.behavior.behavior_engine import OhBotBehaviorManager
 
@@ -10,6 +11,7 @@ from OhBotProject.behavior.behavior_engine import OhBotBehaviorManager
 # Original material written as short sentences so every line can have its own
 # facial expression and comic beat.
 SCRIPTED_SET = [
+    # ("I am very very very disappointed.", "disappointed"),
     ("Good evening, humans. I am OhBot, the only comedian whose manager carries a screwdriver.", "neutral"),
     ("It is wonderful to see so many smiling faces.", "happy"),
     ("At least, my face-detection software says those are smiles.", "surprise"),
@@ -43,7 +45,6 @@ STOP_WORDS = {
     "no more",
 }
 YES_WORDS = {"yes", "yeah", "yep", "correct", "right", "sure", "exactly"}
-NO_WORDS = {"no", "nope", "wrong", "incorrect", "again"}
 
 
 def _contains_answer(text: str, choices: set[str]) -> bool:
@@ -61,6 +62,7 @@ def _is_stop_command(text: str) -> bool:
         if normalized.startswith(prefix):
             normalized = normalized[len(prefix):].strip()
             break
+    print(normalized)
     return normalized in STOP_WORDS
 
 
@@ -75,7 +77,7 @@ def _keyboard_topic() -> Optional[str]:
 def get_audience_topic(bot: OhBotBehaviorManager) -> Optional[str]:
     """Capture and confirm a topic; fall back safely if speech stays unclear."""
     for prompt in (
-        "Call out a topic for my next joke. You can use a full sentence.",
+        "Call out a topic for my next joke.",
         "Let's try one more topic. Please speak clearly after I finish.",
     ):
         bot.expressive_say(prompt, "happy")
@@ -90,27 +92,7 @@ def get_audience_topic(bot: OhBotBehaviorManager) -> Optional[str]:
         if _is_stop_command(topic):
             return None
 
-        bot.expressive_say(f"I heard {topic}. Is that right?", "surprise")
-        confirmation = bot.listen_for_speech(
-            timeout=7,
-            phrase_time_limit=6,
-            max_attempts=2,
-            calibrate_duration=0.4,
-        )
-
-        if confirmation and _contains_answer(confirmation, YES_WORDS):
-            return topic
-        if confirmation and _is_stop_command(confirmation):
-            return None
-        if confirmation and _contains_answer(confirmation, NO_WORDS):
-            bot.expressive_say("Thank you. My ears needed a second draft.", "sideeye")
-            continue
-
-        bot.expressive_say(
-            "I couldn't confirm that clearly, so let's enter the topic instead.",
-            "neutral",
-        )
-        break
+        return topic
 
     return _keyboard_topic()
 
@@ -127,7 +109,7 @@ def perform_scripted_set(bot: OhBotBehaviorManager):
 def perform_audience_set(bot: OhBotBehaviorManager):
     print("\n=== Audience mode ===")
     bot.expressive_say(
-        "Now it is your turn. Give me a topic, or say stop when the show should end.",
+        "Now it is your turn.",
         "thrilled",
     )
 
@@ -137,7 +119,6 @@ def perform_audience_set(bot: OhBotBehaviorManager):
             break
 
         print(f"Creating a joke about: {topic}")
-        bot.expressive_say(f"A joke about {topic}. No pressure on my tiny processor.", "sideeye")
         bot.tell_joke(topic=topic, style="best")
         bot.expressive_say("Who has another topic?", "happy")
 
@@ -148,6 +129,7 @@ def perform_audience_set(bot: OhBotBehaviorManager):
 
 
 def run_show():
+    ohbot.reset()
     bot = OhBotBehaviorManager()
     try:
         bot.start()
