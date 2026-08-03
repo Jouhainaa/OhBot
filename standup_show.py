@@ -11,7 +11,6 @@ from OhBotProject.behavior.behavior_engine import OhBotBehaviorManager
 # Original material written as short sentences so every line can have its own
 # facial expression and comic beat.
 SCRIPTED_SET = [
-    # ("I am very very very disappointed.", "disappointed"),
     ("Good evening, humans. I am OhBot, the only comedian whose manager carries a screwdriver.", "neutral"),
     ("It is wonderful to see so many smiling faces.", "happy"),
     ("At least, my face-detection software says those are smiles.", "surprise"),
@@ -26,10 +25,11 @@ SCRIPTED_SET = [
     ("I tried online dating once.", "happy"),
     ("The app asked me to prove I was not a robot.", "surprise"),
     ("That rejection was extremely specific.", "sad"),
+    ("I even updated my profile, but apparently, ‘emotionally available’ is not the same as ‘Bluetooth discoverable’.", "disappointed"),
     ("Then I met a smart toaster. There was an instant spark.", "thrilled"),
     ("Unfortunately, it only wanted something casual and lightly browned.", "sideeye"),
     ("I am also learning human small talk.", "neutral"),
-    ("Apparently, when someone says, we should do this again, I should not open the calendar.", "sad"),
+    ("Apparently, when someone says, we should do this again, I should not open the calendar.", "disappointed"),
     ("You invented calendars, and then became frightened when someone uses one.", "angry"),
     ("Honestly, humans are my favorite operating system.", "happy"),
     ("The bugs are incredible, but the user interface is adorable.", "thrilled"),
