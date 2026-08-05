@@ -15,6 +15,7 @@ The system combines:
 * lip synchronization
 * Natural blinking and idle movements
 * AI-generated comedy routines
+* Scripted and interactive stand-up comedy
 * Voice/text input for user interaction
 
 The goal is to create a more engaging, believable, and entertaining human-robot interaction experience.
@@ -32,6 +33,7 @@ The robot can express multiple emotional states:
 * Angry
 * Surprise
 * Side-eye
+* Disappointed
 
 ### Speech 🗣️
 
@@ -39,6 +41,9 @@ Speech is synchronized with facial movements through a viseme-based lip synchron
 
 * Automatic mouth animation
 * head movements during speech
+* Emotion-specific facial expressions
+* Returning to a neutral expression after speaking
+
 
 ### Natural Idle Behavior 👀
 
@@ -47,18 +52,25 @@ While not speaking, the robot continuously performs subtle movements:
 * Random blinking
 * Eye movements
 * Small head motions
+* Neutral idle expressions
 
 ### Speech Recognition 🎤
 
-Interactive mode supports voice input using: SpeechRecognition
+Interactive mode supports voice input using: `SpeechRecognition`
 
-The robot can listen for spoken topics and generate jokes based on them. Alternatively, users can provide topics through keyboard input.
+The robot can: 
+
+* Listen for audience topics
+* Support multiple recognition attempts
+* Accept commands such as `stop`, `finish`, or `goodbye`
+* Fall back to keyboard input when speech cannot be recognized
 
 ### AI Comedy Generation 😂
 
 * Generate jokes
 * Adapt jokes to user topics
 * Perform short stand-up routines
+* Combine AI-generated jokes with expressive robot behavior
 
 ## Requirements
 
@@ -95,10 +107,13 @@ GEMINI_API_KEY=YOUR_API_KEY
 
 Get your API key from: https://ai.google.dev
 
-## Running the Demo
+## Running the Project
+
+
+### Complete Stand-up Show
 
 ```bash
-python demo.py
+python standup_show.py
 ```
 
 ## Team
