@@ -140,10 +140,10 @@ class OhBotBehaviorManager:
         self.move_lips(*VISEMES["rest"], speed=5, jitter=0.04)
 
     def expressive_say(self, text: str, mood: str = "neutral", return_to_neutral: bool = True):
-        self.set_mood(mood)
+        #self.set_mood(mood)
         with self._lock:
             self.set_mood(mood)
-            time.sleep(1)
+            time.sleep(0.3)
             self.speaking = True
 
         lip_thread = threading.Thread(
