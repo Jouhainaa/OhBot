@@ -116,6 +116,13 @@ Get your API key from: https://ai.google.dev
 python standup_show.py
 ```
 
+For the full stand-up show—with an original scripted routine, every robot
+emotion, and a voice-first audience section with confirmation and retries—run:
+
+```bash
+python standup_show.py
+```
+
 ## Team
 
 Project developed as part of the Ubiquitous Computing Lab module at the University of Siegen.
@@ -125,4 +132,3 @@ Team Members:
 * Hassan Khalid Butt
 * Sabina Mahmudova
 * Jouhaina Salsabil El Euch
-
